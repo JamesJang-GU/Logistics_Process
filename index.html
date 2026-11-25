@@ -24,14 +24,15 @@ header p{margin:0;color:#b9c6d8;font-size:12.5px}
 .tab:hover{color:var(--ink);border-color:#b9c4d2}
 .tab.on{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:var(--shadow)}
 .intro{flex:1;min-width:260px;color:var(--muted);font-size:12.8px}
-.main{display:grid;grid-template-columns:minmax(250px,18%) 1fr;gap:14px;align-items:start}
+.main{display:grid;grid-template-columns:minmax(250px,18%) 1fr;gap:14px;align-items:stretch}
 .panel{background:var(--panel);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
-.flowp{padding:10px 10px 12px}
+.flowp{padding:10px 10px 12px;display:flex;flex-direction:column}
+.flowbox{position:relative;flex:1;min-height:0}
 .flowp h2,.stage h2{margin:0;font-size:14px;font-weight:900;display:flex;align-items:center;gap:6px}
 .variant{display:flex;gap:4px;background:#f1f4f8;border:1px solid var(--line);border-radius:9px;padding:3px;margin:8px 0}
 .variant button{flex:1;border:0;background:transparent;font:inherit;font-size:12.5px;font-weight:700;padding:5px 6px;border-radius:7px;cursor:pointer;color:var(--muted)}
 .variant button.on{background:var(--amber);color:#3b2600}
-#flow{display:block;width:100%;height:auto}
+#flow{display:block;position:absolute;inset:0;width:100%;height:100%}
 .fb{cursor:pointer}
 .fb .shape{stroke-width:1.4;transition:fill .2s,stroke .2s}
 .fb.doc .shape{fill:#fff;stroke:#8fb2da}
@@ -82,7 +83,7 @@ header p{margin:0;color:#b9c6d8;font-size:12.5px}
 .ctrl label{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-left:auto}
 .prog{height:4px;background:#e8edf3}
 .prog i{display:block;height:100%;width:0;background:var(--amber);transition:width .3s}
-.caption{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;padding:12px 16px;border-top:1px solid var(--line);background:#fbfcfe;min-height:96px}
+.caption{display:grid;grid-template-columns:auto 1fr;gap:2px 14px;padding:12px 16px;border-top:1px solid var(--line);background:#fbfcfe;height:112px;overflow-y:auto;align-content:start}
 .caption .no{grid-row:span 2;font-size:28px;font-weight:900;color:var(--amber);line-height:1}
 .caption .tt{font-size:16px;font-weight:900}
 .chip{display:inline-block;font-size:11px;font-weight:700;border-radius:20px;padding:1px 9px;margin-left:6px;vertical-align:2px}
@@ -104,7 +105,7 @@ header p{margin:0;color:#b9c6d8;font-size:12.5px}
 .tip th,.tip td{border:1px solid #33506f;padding:3px 5px;text-align:left;vertical-align:top}
 .tip th{background:#1b3a5c;color:#ffd58a}
 #err{display:none;position:fixed;left:10px;bottom:10px;background:#b00020;color:#fff;padding:8px 12px;border-radius:8px;font-size:12px;z-index:99;max-width:80vw}
-@media (max-width:900px){.main{grid-template-columns:1fr}.ctrl label{margin-left:0}header{padding:12px 16px}.wrap{padding:12px 16px 24px}}
+@media (max-width:900px){.main{grid-template-columns:1fr}.flowbox{flex:none}#flow{position:static;height:auto}.caption{height:auto;min-height:96px}.ctrl label{margin-left:0}header{padding:12px 16px}.wrap{padding:12px 16px 24px}}
 </style>
 </head>
 <body>
@@ -121,7 +122,7 @@ header p{margin:0;color:#b9c6d8;font-size:12.5px}
     <aside class="panel flowp">
       <h2>🧭 프로세스 순서도</h2>
       <div class="variant" id="variant"></div>
-      <svg id="flow" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="flowbox" id="flowbox"><svg id="flow" preserveAspectRatio="xMidYMin meet" xmlns="http://www.w3.org/2000/svg"></svg></div>
       <div class="flegend">
         <span><i style="border-color:#8fb2da;border-radius:2px 2px 6px 6px"></i>서류·신고</span>
         <span><i style="border-color:#e2b56c"></i>화물 이동</span>
@@ -667,9 +668,14 @@ function drawMarker(pt){
     `<rect x="13" y="-31" width="62" height="18" rx="9" fill="#ff6a00"/><text x="44" y="-18.5" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fff">현재 화물</text></g></g>`;
 }
 function buildFlow(){
-  const st=steps(),W=280,CX={doc:71,cargo:209},BW=128,BH=36,P0=52,PITCH=45,n=st.length;
-  const cy=k=>P0+44+k*PITCH+BH/2, H=cy(n-1)+BH/2+52;
-  const svg=$('flow');svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const st=steps(),W=280,CX={doc:71,cargo:209},BW=128,BH=36,P0=52,n=st.length;
+  /* 우측 패널 높이에 맞춰 단계 간격(PITCH)을 늘리거나 줄여 좌·우 높이를 일치시킴 */
+  const fb=$('flowbox'),fit=!matchMedia('(max-width:900px)').matches&&fb.clientWidth>0&&fb.clientHeight>0;
+  const HT=fit?fb.clientHeight*W/fb.clientWidth:0;
+  const PITCH=fit?Math.max(42,(HT-(P0+44+BH+52))/Math.max(1,n-1)):45;
+  const cy=k=>P0+44+k*PITCH+BH/2, H=Math.max(cy(n-1)+BH/2+52,HT);
+  flowSize=fit?fb.clientWidth+'x'+fb.clientHeight:'';
+  const svg=$('flow');svg.setAttribute('viewBox',`0 0 ${W} ${f1(H)}`);
   let s=`<defs><marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#9aa8b8"/></marker></defs>`+
     `<rect x="4" y="4" width="134" height="${H-8}" rx="10" fill="#eaf2fb"/><rect x="142" y="4" width="134" height="${H-8}" rx="10" fill="#fdf3e1"/>`+
     `<text x="71" y="25" text-anchor="middle" font-size="12" font-weight="900" fill="#2f6fb5">📄 서류 · 정보</text><text x="209" y="25" text-anchor="middle" font-size="12" font-weight="900" fill="#c77a12">📦 화물 · 운송</text>`+
@@ -822,6 +828,14 @@ function load(i=-1){
 const tip=$('tip');
 function bindTip(el,html){el.addEventListener('mouseenter',e=>{tip.innerHTML=html();tip.classList.add('show');moveTip(e);});el.addEventListener('mousemove',moveTip);el.addEventListener('mouseleave',()=>tip.classList.remove('show'));}
 function moveTip(e){const r=tip.getBoundingClientRect();let x=e.clientX+16,y=e.clientY+16;if(x+r.width>innerWidth-8)x=e.clientX-r.width-16;if(y+r.height>innerHeight-8)y=Math.max(8,innerHeight-r.height-8);tip.style.left=x+'px';tip.style.top=y+'px';}
+/* ---------- 좌측 순서도 높이 자동 맞춤 ---------- */
+let flowSize='',flowRaf=0;
+function refitFlow(){cancelAnimationFrame(flowRaf);flowRaf=requestAnimationFrame(()=>{
+  const fb=$('flowbox'),sz=matchMedia('(max-width:900px)').matches?'':fb.clientWidth+'x'+fb.clientHeight;
+  if(sz===flowSize)return;buildFlow();updateUI();
+  if(cur.i>=0&&!cur.running)markDone(cur.i);});}
+if(window.ResizeObserver)new ResizeObserver(refitFlow).observe($('flowbox'));
+addEventListener('resize',refitFlow);
 /* ---------- 컨트롤 ---------- */
 $('bPlay').onclick=()=>{const n=steps().length;
   if(cur.playing){cur.playing=false;updateUI();return;}
