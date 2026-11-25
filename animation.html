@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>한국 수출입물류 프로세스</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f8; --panel:#ffffff; --ink:#13233a; --muted:#5d6b7e; --line:#dde3ea;
+  --navy:#0f2742; --amber:#f5a623; --amber-soft:#fff4df; --sea:#1d6fb8; --air:#7b4fd6;
+  --ok:#1f9d6b; --shadow:0 6px 24px rgba(15,39,66,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Noto Sans KR',system-ui,sans-serif;font-size:15px;line-height:1.55}
+header{background:var(--navy);color:#fff;padding:18px 28px 14px}
+header h1{margin:0;font-size:24px;font-weight:900;letter-spacing:-.3px}
+header p{margin:4px 0 0;color:#b9c6d8;font-size:13.5px}
+.wrap{max-width:1320px;margin:0 auto;padding:18px 20px 40px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tab{border:1px solid var(--line);background:var(--panel);padding:10px 18px;border-radius:10px;cursor:pointer;font:inherit;font-weight:700;color:var(--muted);transition:.15s}
+.tab:hover{color:var(--ink);border-color:#b9c4d2}
+.tab.on{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:var(--shadow)}
+.tab .k{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:20px;margin-left:6px;background:var(--amber);color:#3b2600;vertical-align:2px}
+.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.variant{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:3px}
+.variant button{border:0;background:transparent;font:inherit;font-weight:700;padding:5px 14px;border-radius:7px;cursor:pointer;color:var(--muted)}
+.variant button.on{background:var(--amber);color:#3b2600}
+.intro{color:var(--muted);font-size:13.5px;flex:1;min-width:260px}
+.stage{background:var(--panel);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+#scene{display:block;width:100%;height:auto;user-select:none}
+.node{cursor:help}
+.node rect.box{fill:#fff;stroke:#c9d3df;stroke-width:1.5;transition:.2s}
+.node.office rect.box{fill:#f7f9fc}
+.node:hover rect.box{stroke:var(--amber);stroke-width:2.5}
+.node.active rect.box{stroke:var(--amber);stroke-width:3;fill:var(--amber-soft)}
+.node text{font-family:'Noto Sans KR',sans-serif;pointer-events:none}
+.node .lbl{font-size:13px;font-weight:700;fill:var(--ink)}
+.node .sub{font-size:10.5px;fill:var(--muted)}
+.lane-lbl{font-size:11px;fill:#7a8797;font-weight:700}
+.ctrl{display:flex;align-items:center;gap:8px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.ctrl button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 13px;font:inherit;font-weight:700;cursor:pointer;color:var(--ink)}
+.ctrl button:hover{border-color:var(--amber)}
+.ctrl button.primary{background:var(--navy);color:#fff;border-color:var(--navy);min-width:96px}
+.ctrl label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-left:auto}
+.prog{height:4px;background:#e8edf3}
+.prog i{display:block;height:100%;width:0;background:var(--amber);transition:width .3s}
+.caption{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;padding:14px 18px;border-top:1px solid var(--line);background:#fbfcfe}
+.caption .no{grid-row:span 2;font-size:28px;font-weight:900;color:var(--amber);line-height:1}
+.caption .tt{font-size:17px;font-weight:900}
+.caption .who{display:inline-block;font-size:11.5px;font-weight:700;background:#e9eef5;color:#33475f;border-radius:20px;padding:1px 9px;margin-left:8px;vertical-align:2px}
+.caption .dd{font-size:13.5px;color:#34465c}
+.caption .dd ul{margin:4px 0 0;padding-left:18px}
+#actors,#links{pointer-events:none}
+.caption table{border-collapse:collapse;font-size:12px;margin-top:8px}
+.caption th,.caption td{border:1px solid var(--line);padding:3px 7px;text-align:left;vertical-align:top}
+.caption th{background:#eef2f7}
+.steps-h{margin:22px 0 8px;font-size:15px;font-weight:900;display:flex;align-items:center;gap:8px}
+.steps-h small{font-weight:500;color:var(--muted)}
+.steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:10px 12px 11px;cursor:pointer;position:relative;transition:.15s}
+.card:hover{border-color:var(--amber);transform:translateY(-2px);box-shadow:var(--shadow)}
+.card.on{border-color:var(--amber);background:var(--amber-soft);box-shadow:0 0 0 2px var(--amber) inset}
+.card.done{opacity:.72}
+.card .n{font-size:11px;font-weight:900;color:#fff;background:var(--navy);border-radius:5px;padding:1px 6px}
+.card .ic{float:right;font-size:18px}
+.card .t{font-weight:700;margin-top:6px;font-size:14px;line-height:1.35}
+.card .w{font-size:11.5px;color:var(--muted);margin-top:3px}
+.tip{position:fixed;z-index:50;max-width:440px;background:#0f2742;color:#e8eef6;border-radius:12px;padding:13px 15px;font-size:13px;line-height:1.6;box-shadow:0 12px 36px rgba(0,0,0,.28);pointer-events:none;opacity:0;transition:opacity .12s}
+.tip.show{opacity:1}
+.tip h4{margin:0 0 6px;font-size:15px;color:#fff}
+.tip .who{display:inline-block;font-size:11px;font-weight:700;background:var(--amber);color:#3b2600;border-radius:20px;padding:0 8px;margin-bottom:6px}
+.tip ul{margin:4px 0;padding-left:18px}
+.tip b{color:#ffd58a}
+.tip table{border-collapse:collapse;font-size:11.5px;margin-top:6px;width:100%}
+.tip th,.tip td{border:1px solid #33506f;padding:3px 5px;text-align:left;vertical-align:top}
+.tip th{background:#1b3a5c;color:#ffd58a}
+.tip .src{margin-top:8px;font-size:11px;color:#8fa3bb}
+.legend{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--muted)}
+.legend b{color:var(--ink)}
+@media (max-width:700px){header{padding:14px 16px}.wrap{padding:12px 16px 30px}.ctrl label{margin-left:0}}
+</style>
+</head>
+<body>
+<header>
+  <h1>한국의 수출입물류 프로세스 — 해상 · 항공</h1>
+  <p>「한국의 수출입물류 프로세스」 제2장 ‘수출입 절차별 물류 프로세스’ 기반 · 각 단계 카드와 장면 속 시설에 마우스를 올리면 해설이 나타납니다.</p>
+</header>
+<div class="wrap">
+  <div class="tabs" id="tabs"></div>
+  <div class="bar">
+    <div class="variant" id="variant"></div>
+    <div class="intro" id="intro"></div>
+  </div>
+  <div class="stage">
+    <svg id="scene" viewBox="0 0 1200 460" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="prog"><i id="prog"></i></div>
+    <div class="caption" id="caption"></div>
+    <div class="ctrl">
+      <button id="bPrev" title="이전 단계">⏮ 이전</button>
+      <button id="bPlay" class="primary">▶ 재생</button>
+      <button id="bNext" title="다음 단계">다음 ⏭</button>
+      <button id="bReset" title="처음으로">↺ 처음</button>
+      <label>속도 <input type="range" id="speed" min="0.5" max="3" step="0.25" value="1"> <span id="spv">1.0x</span></label>
+    </div>
+  </div>
+  <div class="steps-h">단계별 프로세스 <small>카드에 마우스를 올리면 상세 설명 · 클릭하면 해당 단계 애니메이션 재생</small></div>
+  <div class="steps" id="steps"></div>
+  <div class="legend" id="legend"></div>
+</div>
+<div class="tip" id="tip"></div>
+<script>
+/* ===================== 데이터: 해상 수출 ===================== */
+const SC = {};
+SC.seaEx = {
+  tab:'🚢 해상 수출', kind:'sea', dir:'out',
+  intro:'수출화물의 물류는 화주의 생산 공장(shipper’s door) 출고 시점부터 시작되어, 컨테이너 야드(CY)에서 선사에 의해 본선 적재가 이뤄지면 한국 내 운송 과정이 끝납니다. 내륙운송 경로는 육상(공로)·철도·연안 3가지입니다.',
+  statics:{ship:true, crane:true},
+  nodes:{
+    shipper:{x:80,y:220,ic:'🏭',l:'화주 공장',sub:'Shipper’s door',d:'수출화물의 물류 프로세스가 시작되는 곳. 수출화물은 화주의 <b>자가장치장</b>이나 <b>타소장치장</b>을 거칠 수도 있고, 곧바로 운송이 시작될 수도 있습니다. <b>FCL</b>은 보통 화주 <b>문전통관</b> 후 수송되고, <b>LCL</b>은 미통관 상태로 수송되어 선적지에서 통관됩니다.'},
+    icd:{x:250,y:220,ic:'🏗️',l:'의왕 ICD',sub:'내륙컨테이너기지',d:'<b>내륙화물복합운송기지(ICD)</b>. 시내운송을 거친 화물은 의왕·양산 등지의 ICD로 운송되어 부두나 공항으로 <b>보세운송</b>됩니다. ICD를 거치지 않고 곧바로 부두로 운송(공로직반)되기도 합니다.'},
+    rail:{x:420,y:220,ic:'🚉',l:'부산진역',sub:'철도 CY',d:'의왕 ICD에서 철도로 보세운송된 컨테이너가 도착하는 철도 CY. 이곳에서 부두로 <b>셔틀운송</b>됩니다(철도직반).'},
+    odcy:{x:580,y:220,ic:'📦',l:'ODCY / CFS',sub:'Off-Dock CY',d:'<b>ODCY(Off Dock CY)</b>: 부두 밖 컨테이너 야드. <b>CFS(Container Freight Station)</b>에서는 LCL 화물의 <b>혼재(consolidation)·컨테이너 적입</b> 작업이 이루어집니다. 이후 셔틀운송으로 컨테이너 부두에 반입됩니다.'},
+    cy:{x:740,y:220,ic:'🗄️',l:'컨테이너 부두 CY',sub:'전용부두 · 일반부두',d:'<b>CY(Container Yard)</b>. CY 오퍼레이터는 Booking List에 따라 빈 컨테이너를 대출하고, 컨테이너화물을 인수할 때 <b>부두수취증(D/R)</b>에 서명 후 화주에게 반환합니다. 하역업체는 반입계와 Gate log를 확인하여 CY에 장치하였다가 선적작업을 수행합니다.'},
+    forwarder:{x:250,y:62,ic:'🧑‍💼',l:'포워더',o:1,d:'<b>포워더(운송주선인)</b>. 수출자는 선박·항공기 수배 등 운송 관련 업무를 운송인에게 맡기는 경우가 많으며, 운송인은 수출자를 대신하여 선박수배·예약 업무를 진행합니다. 특히 LCL은 운임 할인 혜택 등을 위해 대부분 포워딩 회사를 이용합니다.'},
+    carrier:{x:450,y:62,ic:'🏢',l:'선사(대리점)',o:1,d:'<b>선사</b>는 예약을 받으면 ①컨테이너의 준비 ②출하정보의 파악과 화물의 인수 ③컨테이너의 배치 ④화물의 인수 ⑤선적서류의 작성과 송부 업무를 수행합니다.'},
+    customs:{x:650,y:62,ic:'🏛️',l:'세관',o:1,d:'<b>관세청·세관</b>. 수출신고 수리, 그리고 <b>적하목록 적재 전 신고제도</b>를 운영합니다(미국행 해상화물 적재 24시간 전, 기타 해상화물 적재 전, 근거리 해상·항공화물 출항익일 24시까지).'},
+    buyer:{x:1110,y:62,ic:'🌏',l:'수입자(바이어)',o:1,d:'해외의 수입자. 선적이 끝나면 수출자로부터 <b>선적통지(Shipping Notice)</b>와 <b>선하증권 사본</b>을 받습니다.'}
+  },
+  flows:{
+    FCL:[
+      {t:'선박 스케줄 확인 · 선박 수배',who:'화주 / 포워더',a:'work',at:'forwarder',e:'🗓️',
+       d:'출항일 전후 선적항에 기항하는 선박스케줄을 선사 홈페이지·전화, 또는 화주협의회(shippersgate.kita.net)·코리아쉬핑가제트·스케줄뱅크 등에서 확인합니다.<ul><li>① 입·출항일 및 시간, <b>transit time</b>, 직항/환적 여부</li><li>② <b>ETD</b>(출항예정)와 <b>ETA</b>(도착예정)</li><li>③ CY cargo인 경우 화물수취 <b>마감시간(closing time)</b></li></ul>‘Schedule is subject to change’이므로 확정 후에도 재확인 필요. 운송계약·선박수배 의무는 <b>FOB는 수입상</b>(운송인 지정, nomination), <b>CIF는 수출상</b>이 집니다.'},
+      {t:'선적 예약 (Booking · S/R)',who:'화주 → 포워더 → 선사',a:'doc',from:'shipper',via:['forwarder'],to:'carrier',
+       d:'화물 출고 전 또는 수출신고 전후에 선사 소정 양식인 <b>선적의뢰서(S/R: Shipping Request)</b>를 작성해 송부하고 접수 여부를 확인합니다.<ul><li>C/I·P/L만 보내는 예약은 정상적 청약으로 보기 어려워 문제 발생 시 화주가 불리</li><li>선사가 적하목록(manifest)을 직접 작성하므로 S/R을 정확히, 가급적 <b>수출신고필증 사본</b>도 제출</li><li>예약 변경은 선박 입항 전 서면·구두로 통지(양하항 변경 시 FCL은 하역업자 이송 전)</li></ul>S/R 항목: Shipper, Consignee, Notify Party, Vessel/Voyage, POL, POD, Container/Seal No., 포장수, 품명, 중량(kg), 용적(CBM) 등.'},
+      {t:'Booking Note · Booking List 송부',who:'선사 → CY 오퍼레이터',a:'doc',from:'carrier',to:'cy',
+       d:'선사(대리점)는 <b>화물선적예약서(booking note / confirmation)</b>를 전산 입력하고, <b>화물인수예약명세서(booking list)</b>를 관계 지점에 송부합니다. 선적예상목록과 선박스케줄은 하역업체에 통보됩니다. 원칙적으로 화주와 일등항해사 앞으로 <b>선적지시서(S/O)</b>를 보내지만, 실무에서는 구두로 예약번호만 알려주는 경우가 많습니다.'},
+      {t:'공컨테이너 반출 (EIR)',who:'CY 오퍼레이터 → 화주',a:'truckE',from:'cy',to:'shipper',
+       d:'Booking List를 기초로 선사의 지시에 따라 CY 오퍼레이터는 필요한 <b>빈 컨테이너</b>를 화주에게 대출하고 <b>기기수도증(EIR: Equipment Interchange Receipt)</b>을 접수합니다. 화주는 운송사와 운송일정을 협의하여 빈 컨테이너를 인수합니다(공컨운송).'},
+      {t:'화물 적입 · Sealing · 수출통관',who:'화주 (관세사)',a:'work',at:'shipper',e:'📦',
+       d:'화주는 빈 컨테이너에 화물을 <b>적입 및 sealing</b>합니다(이 과정도 운송인이 맡는 경우가 많음). FCL 화물은 보통 <b>화주 문전통관</b> 후 수송됩니다. 수출화물은 자가장치장이나 타소장치장을 거칠 수도 있습니다. 세계적으로 규격화된 컨테이너는 운송·보관·하역을 효율화하고 물류비를 낮춥니다.'},
+      {t:'내륙운송 (공로) → 의왕 ICD',who:'운송업체',a:'truck',from:'shipper',to:'icd',
+       d:'수출화물은 시내운송을 거쳐 의왕·양산 등지의 <b>ICD</b>로 운송됩니다. 내륙 경로는 <b>육상운송·철도운송·연안운송</b> 3가지이며 화물의 양·종류에 따라 선택합니다. ICD를 거치지 않고 부두로 바로 가는 <b>공로직반</b>도 있습니다.'},
+      {t:'철도 보세운송 → 부산진역',who:'철도운송',a:'train',from:'icd',to:'rail',
+       d:'ICD에서 부두·공항으로 <b>보세운송</b>됩니다. 의왕 ICD → 부산진역(철도 CY) 구간은 철도로 수송되는 대표 경로입니다(철도직반).'},
+      {t:'셔틀운송 → 부두 CY 반입 (D/R)',who:'운송업체 / CY 오퍼레이터',a:'truck',from:'rail',to:'cy',
+       d:'철도 CY·ODCY에서 컨테이너 부두로 <b>셔틀운송</b>되어 CY에 장치됩니다. CY 오퍼레이터는 화물을 인수하며 <b>부두수취증(D/R: Dock Receipt)</b>에 서명 후 화주에게 반환합니다.<br><b>마감시간(closing time)</b> 엄수: 선사는 적하목록 제출기한보다 하루 또는 12시간 정도 앞당겨 CY 반입 마감을 운영합니다. ‘자가운송’ 시에는 선사 책임이 없으므로 수출자가 직접 마감을 지켜야 합니다.'},
+      {t:'적하목록 제출 (적재 전 신고)',who:'선사 / 포워더 → 세관',a:'doc',from:'carrier',to:'customs',
+       d:'한국 관세청은 <b>적하목록 적재전 신고제도</b>를 시행합니다.<ul><li>미국행 해상화물: 적재 <b>24시간 전</b></li><li>기타 해상화물: <b>적재 전</b></li><li>근거리 해상화물·항공화물: <b>출항익일 24시</b>까지</li></ul>마감시간 내 반입하지 못하면 예약된 선박에 선적하지 못합니다.'},
+      {t:'본선 적재 (갠트리크레인)',who:'CY 오퍼레이터 / 하역업체',a:'lift',from:'cy',to:'ship',
+       d:'본선이 입항하면 CY 오퍼레이터가 <b>갠트리크레인</b>으로 컨테이너를 본선에 적재합니다. 선적이란 수출화물을 선박에 실제로 싣는 작업(To be actually taken on board)으로, 최근엔 항공·철도의 발송(dispatch), 복합운송의 수탁(taking in charge)까지 포괄합니다.<ul><li>선적조건: 선적기일(S/D), 선적항(POL), 도착항(POD), 분할선적, 환적(T/S)</li><li>선적 완료 후 <b>적부도(stowage plan)</b>와 특수화물 목록을 작성·배포</li></ul>'},
+      {t:'선하증권(B/L) 수령',who:'선사 → 화주',a:'doc',from:'carrier',to:'shipper',
+       d:'D/R을 수취한 화주는 이를 선사에서 <b>선하증권(B/L)</b>과 교환하고, 운임 선불이면 운임을 지급합니다. 선사는 점검(check)용 B/L 발행 후 원본을 발행하므로 <b>도착항·컨테이너번호</b> 등 기재 내용을 반드시 확인하고, 오류는 즉시 알리고 서면으로 남깁니다.<br>On board B/L을 받았더라도 선적 착오 등으로 실리지 못할 수 있으니 <b>실제 선적·출항 여부를 끝까지 확인</b>합니다.'},
+      {t:'출항',who:'선사',a:'ship',from:'ship',to:'out',fx:{hide:['ship']},
+       d:'본선이 출항하면 수출화물의 한국 내 운송 과정이 끝납니다. 선적일 입증은 B/L상 <b>본선적재일(on board date)</b> 및 <b>B/L 발행일</b>로 합니다. <b>S/D는 연장되지 않으므로</b> 공휴일이면 당일 또는 전일까지 선적하고 B/L을 받아야 합니다.'},
+      {t:'선적통지 (Shipping Notice)',who:'수출자 → 수입자',a:'doc',from:'shipper',to:'buyer',
+       d:'선적절차가 끝나면 수출업자는 수입업자에게 지체 없이 <b>선적통지</b>를 하고 <b>B/L 사본</b>을 보냅니다.<ul><li>필수: 선사명, 선박명, 출항일(ETD), 선적항, 상품 및 수량, B/L 번호</li><li>부수: 예상도착일(ETA), L/C 번호</li></ul>'}
+    ],
+    LCL:[
+      {t:'선적 예약 (콘솔업자 · 선사)',who:'화주 → 콘솔업자 → 선사',a:'doc',from:'shipper',via:['forwarder'],to:'carrier',
+       d:'LCL 화물은 운임 할인 혜택 등을 위해 대부분 <b>포워더(콘솔 업자)</b>를 이용합니다. 화주가 콘솔 업자에 선적예약하면, 콘솔 업자가 여러 화주의 화물을 모아 선사에 선적예약합니다.'},
+      {t:'미통관 상태로 공로운송 → CFS',who:'운송 회사',a:'van',from:'shipper',to:'odcy',
+       d:'LCL 화물은 <b>육상(공로)</b>으로 수송되어 CFS에서 컨테이너 적입 작업이 이루어집니다. FCL과 달리 <b>미통관 상태</b>로 수송되어 선적지에서 통관됩니다. 반입처는 <b>컨부두 CFS</b> 또는 <b>ODCY CFS</b>(영업용 보세창고) 두 갈래입니다.'},
+      {t:'CFS 반입 · 화물 혼재 (Consolidation)',who:'CFS 오퍼레이터 / 콘솔 업자',a:'work',at:'odcy',e:'📦',
+       d:'여러 화주의 소량화물을 하나의 컨테이너에 모아 싣는 <b>화물혼재</b> 작업. CFS 오퍼레이터는 화물을 인수할 때 <b>D/R</b>에 서명 후 화주에게 반환합니다. 이후 ODCY 구내이송 & 장치.'},
+      {t:'수출통관 (혼재 또는 통관)',who:'관세사 → 세관',a:'doc',from:'odcy',to:'customs',
+       d:'LCL 화물은 CFS 등 선적지에서 혼재 작업과 함께 <b>수출통관</b>이 이뤄집니다. 상업송장·포장명세서 등을 수출신고서에 첨부하여 신고하고 <b>수출신고필증</b>을 받습니다.'},
+      {t:'셔틀운송 → 컨부두 반입',who:'운송 회사',a:'truck',from:'odcy',to:'cy',
+       d:'ODCY CFS에서 혼재된 컨테이너는 <b>셔틀운송</b>으로 컨테이너 부두에 반입되어 CY에 장치됩니다. (컨부두 CFS 경로는 CY 구내이송 → CY 장치)'},
+      {t:'적하목록 제출',who:'선사 / 포워더 → 세관',a:'doc',from:'carrier',to:'customs',
+       d:'선사는 Master B/L 단위, 포워더는 House B/L 단위(혼재화물) 적하목록을 작성합니다. 미국행 적재 24시간 전, 기타 해상 적재 전 제출해야 하므로 CY 반입 마감을 앞당겨 운영합니다.'},
+      {t:'본선 적재',who:'CY 오퍼레이터',a:'lift',from:'cy',to:'ship',
+       d:'CY에 장치된 혼재 컨테이너를 갠트리크레인으로 <b>본선 적재</b>합니다. 선적 완료 후 적부도와 특수화물 목록을 작성·배포합니다.'},
+      {t:'B/L 발급 (Master / House)',who:'선사 → 콘솔 업자 → 화주',a:'doc',from:'carrier',via:['forwarder'],to:'shipper',
+       d:'선사는 콘솔 업자에게 <b>Master B/L</b>을, 콘솔 업자는 각 화주에게 <b>House B/L</b>을 발급합니다. 화주는 기재 내용을 반드시 확인합니다.'},
+      {t:'출항 · 선적통지',who:'선사 / 수출자',a:'ship',from:'ship',to:'out',fx:{hide:['ship']},
+       d:'본선이 출항하면 한국 내 운송이 끝나며, 수출자는 수입자에게 지체 없이 <b>선적통지</b>와 B/L 사본을 송부합니다.'}
+    ]
+  }
+};
+/* ===================== 데이터: 해상 수입 ===================== */
+const IMPORT_TABLE = '<table><tr><th>구분</th><th>출항전 신고</th><th>입항전 신고</th><th>보세구역 도착전</th><th>보세구역 장치후</th></tr>'+
+ '<tr><td>신고시기</td><td>선박(항공기) 출항전</td><td>출항후 입항 보고전</td><td>입항후 보세구역 도착전</td><td>보세구역 장치 후</td></tr>'+
+ '<tr><td>대상 제한</td><td>항공기 수입물품, 일본·대만·홍콩·중국發 선박 물품, 컨테이너는 FCL만</td><td>컨테이너는 FCL만</td><td>제한없음</td><td>제한없음</td></tr>'+
+ '<tr><td>신고세관</td><td>입항예정지 세관</td><td>입항예정지 세관</td><td>입항지 또는 보세구역 관할</td><td>보세구역 관할</td></tr>'+
+ '<tr><td>검사생략 수리</td><td>적하목록 제출 후</td><td>적하목록 제출 후</td><td>보세구역 도착일</td><td>수입신고일</td></tr></table>';
+SC.seaIm = {
+  tab:'🚢 해상 수입', kind:'sea', dir:'in',
+  intro:'수입화물의 운송은 수출화물과 반대입니다. 선박이 국내 항구에 들어오면 하역을 거쳐 CY에 적치하고, 통관 후 물품을 반출하여 내륙운송으로 최종 목적지로 갑니다. 한국에는 부산항·인천항 등 30개 무역항이 있습니다.',
+  statics:{ship:false, crane:true},
+  nodes:{
+    consignee:{x:80,y:220,ic:'🏭',l:'수입화주 문전',sub:'자가/타소장치장',d:'최종 목적지. 사전 수입신고·직통관된 화물은 자가장치장을 거쳐 내륙운송되고, 직통관이 아니면 자가장치장이나 타소장치장에 적치된 다음 통관됩니다. 화주 문전에서 컨테이너 내장물품을 인출한 뒤 <b>공컨테이너를 반환</b>합니다.'},
+    icd:{x:250,y:220,ic:'🏗️',l:'의왕 ICD',sub:'내륙컨테이너기지',d:'철도 보세운송으로 도착한 수입 컨테이너를 화물차로 하차·일시장치한 뒤 트럭으로 화주 문전까지 운송합니다. 선사가 지정한 경우 <b>빈 컨테이너 반납</b>도 가능합니다.'},
+    rail:{x:420,y:220,ic:'🚉',l:'부산진역',sub:'철도 CY',d:'부두양하 → 보세운송·타소장치 허가 → <b>철도이용 보세운송</b> → 부산진역 경유 → 의왕 ICD 경로의 철도 CY.'},
+    odcy:{x:580,y:220,ic:'📦',l:'ODCY / CFS',sub:'Off-Dock CY',d:'부두에서 떨어진 <b>오프도크 컨테이너 야드</b>. CY에서 ODCY로 옮겼다가 통관하기도 합니다. LCL 화물은 CFS로 이송되어 <b>적출(devanning)</b> 후 수하인별로 분류·인도됩니다. 빈 컨테이너는 원칙적으로 수령했던 ODCY로 반환합니다.'},
+    cy:{x:740,y:220,ic:'🗄️',l:'컨테이너 부두 CY',sub:'하선장소',d:'하역업자는 하선신고서에 따라 하선신고일로부터 <b>7일 이내</b> 하선장소에 물품을 반입하고, 보세구역 설영인은 즉시 반입신고를 합니다. 컨테이너에 내장된 상태로 <b>10일</b>이 지나면 적출하여 집화소 등으로 옮겨야 하며, 부득이한 경우 <b>20일</b> 범위에서 연장 신청이 가능합니다.'},
+    bank:{x:90,y:62,ic:'🏦',l:'개설은행',o:1,d:'L/C 개설은행. 수입화주는 은행에서 <b>선하증권 원본</b>을 찾아 선사에 제시합니다. 원본 도착 전이면 은행에서 <b>수입화물선취보증서(L/G)</b>를 발급받습니다.'},
+    broker:{x:250,y:62,ic:'🧾',l:'관세사',o:1,d:'수입화주의 통관의뢰를 받아 <b>수입신고</b>(송품장·선하증권·포장명세서 등 첨부)를 대행합니다.'},
+    forwarder:{x:410,y:62,ic:'🧑‍💼',l:'포워더',o:1,d:'선적 통지, 도착 통지, <b>혼재적하목록</b> 작성 및 선사 제출, 선적서류 입수, 화물인출 업무를 담당합니다.'},
+    carrier:{x:570,y:62,ic:'🏢',l:'선사(대리점)',o:1,d:'선박 입항업무, 선적서류 접수, 적하목록·하선신고서 제출, 화물 양하, 화물인도. 컨테이너 양륙준비, CY/CFS 오퍼레이터에 서류 송부, 도착통지서·운임청구서 발송, <b>D/O 발행</b>, 과부족 시 추적조사를 수행합니다.'},
+    customs:{x:730,y:62,ic:'🏛️',l:'세관',o:1,d:'입항보고서·적하목록·하선신고서 접수, 보세운송 신고, <b>수입신고 심사</b> 및 수입신고필증 교부.'},
+    port:{x:890,y:62,ic:'⚓',l:'지방해양항만청',o:1,d:'입항선박은 지방해양항만청에 신고합니다(총톤수 5톤 미만, 해양사고 구조 선박 등은 면제). 항만시설사용허가, 예선 및 도선 지정을 합니다.'},
+    origin:{x:1110,y:62,ic:'🌏',l:'수출국 선사',o:1,d:'선적항에서 선적이 완료되면 부두수취증(D/R) 사본, 컨테이너 적치표(CLP) 등 적하 관계 서류를 수입국 선사로 송부합니다.'}
+  },
+  flows:{
+    FCL:[
+      {t:'선적정보 입수',who:'수출국 선사 → 수입국 선사',a:'doc',from:'origin',to:'carrier',
+       d:'수입국 선사는 수출국 선사로부터 <b>컨테이너 선적목록(container load list)</b>, B/L 목록, 선박출항보고서를 접수하고, B/L copy, 적하목록(manifest), 위험화물목록, 식물화물목록, 최종본선계획(final stowage plan), 컨테이너 적치표(CLP), 컨테이너번호목록 등을 통보받습니다.'},
+      {t:'입항 신고 · 적하목록 제출',who:'선사 → 항만청 · 세관',a:'doc',from:'carrier',via:['customs'],to:'port',
+       d:'선사는 입항 전 항만시설사용허가서, 예선사용신청서, 도선지정사용신청서, 입항보고서, 선원명부, 승객명부 등을 지방해양항만청과 세관에 신고합니다.<ul><li>입항보고서·<b>적하목록</b>: 입항 <b>24시간 전</b>(중국 등 근거리는 입항 시까지)</li><li>적하목록: Master B/L 단위 + House B/L 단위(혼재화물)</li><li>하선 전 하선장소를 기재한 <b>하선신고서</b> 제출</li></ul>선사 대리점은 입항예정일과 적하목록을 터미널운영업체·운송업체·ODCY에도 보내 양하·반입·내륙운송을 준비시킵니다.'},
+      {t:'화물 도착통지 (Arrival Notice)',who:'선사 → 수입화주',a:'doc',from:'carrier',to:'consignee',
+       d:'선사는 선박 도착 전 화주에게 <b>도착통지서(arrival notice)</b>와 운임청구서를 보냅니다. 체선료(demurrage) 발생을 방지하고 컨테이너 기기·차량을 효율적으로 관리하기 위함입니다. B/L 약관상 arrival notice는 선사의 의무가 아니므로 <b>화주가 도착 여부를 수시로 확인</b>하는 것이 안전합니다.'},
+      {t:'선박 입항 (도선 · 예인)',who:'선사 / 도선사',a:'ship',from:'out',to:'ship',fx:{show:['ship']},
+       d:'선박은 일반적으로 외항으로부터 <b>도선사와 예인선</b>의 도움을 받아 컨테이너 전용부두나 일반부두에 입항합니다. 부두에서 직반출할 화물은 입항 전에 선사에 <b>부두하선 요청</b>(부두 내 하선 또는 본선 차상 반출)을 해야 합니다.'},
+      {t:'본선 하역 (양하)',who:'하역회사 / 터미널',a:'lift',from:'ship',to:'cy',
+       d:'갠트리크레인으로 컨테이너를 양하하여 CY에 반입합니다. 컨테이너 화물의 하선 장소는 부두 내 또는 부두 밖 CY입니다. 터미널은 본선입항·양하 계획과 게이트반출 업무를 담당합니다.'},
+      {t:'CY 반입 · 장치',who:'하역업자 / 보세구역 설영인',a:'work',at:'cy',e:'🗄️',
+       d:'하선신고일로부터 <b>7일 이내</b> 하선장소에 반입, 즉시 <b>반입신고</b>. 내장 상태로 <b>10일</b> 경과 시 적출하여 다른 보세구역으로 반입해야 하며, 고지·고철·원피·원면·살물 등은 세관장에게 <b>20일</b> 범위 내 연장 신청이 가능합니다.'},
+      {t:'수입신고 · 통관',who:'관세사 → 세관',a:'doc',from:'consignee',via:['broker'],to:'customs',
+       d:'원칙적으로 물품이 지정 보세구역에 장치된 것을 확인(장치확인) 받은 후 신고하지만, 신속 통관을 위해 <b>도착 전 신고</b>도 가능하며 부두직통관 화물은 사전수입신고가 가능합니다. 심사 후 <b>수입신고필증</b>을 교부합니다.'+IMPORT_TABLE},
+      {t:'B/L 원본 제시 → D/O 수령',who:'은행 → 화주 → 선사',a:'doc',from:'bank',via:['consignee'],to:'carrier',
+       d:'수입화주는 개설은행에서 입수한 <b>선하증권 원본</b>을 선사에 제출하고 운임 등 비용을 정산한 뒤 <b>화물인도지시서(D/O)</b>를 받습니다. D/O는 CY·CFS·보세창고에 D/O 소지인에게 화물을 인도하라고 지시하는 <b>비유통 서류</b>입니다. B/L 원본 도착 전이면 은행의 <b>L/G(수입화물선취보증서)</b>로 D/O 발급이 가능합니다.'},
+      {t:'게이트 반출 → 부산진역',who:'운송업체',a:'truck',from:'cy',to:'rail',
+       d:'부두양하 → <b>보세운송·타소장치 허가</b> → 게이트 반출. 타지역 운송 화물은 적하목록을 첨부하여 세관에 보세운송 신고를 한 후 반출합니다(입항 전 보세운송 신고도 가능). 다른 경로: 게이트반출 → ODCY 반입 → 장치 → 수입통관 → 화주 문전 수송.'},
+      {t:'철도 보세운송 → 의왕 ICD',who:'철도운송',a:'train',from:'rail',to:'icd',
+       d:'FCL 경로 ③: 철도이용 보세운송 → 부산진역 경유 → <b>의왕 ICD</b> → 화물차 하차 → (일시장치).'},
+      {t:'트럭 운송 → 화주 문전 통관',who:'운송업체',a:'truck',from:'icd',to:'consignee',
+       d:'ICD에서 트럭에 상차하여 화주 문전에 도착한 뒤 <b>수입통관</b>합니다. 부두 통관 후 직반출, 부두 보세운송 직반출 등 다른 FCL 경로도 있습니다.'},
+      {t:'컨테이너 내장물품 인출 (적출)',who:'수입화주',a:'work',at:'consignee',e:'📦',
+       d:'수하인은 D/O를 제출하고 FCL 화물을 인수한 뒤 컨테이너 내장물품을 인출합니다. 필요 시 검수·검량·감정을 합니다.'},
+      {t:'공(空)컨테이너 반송',who:'운송업체',a:'truckE',from:'consignee',to:'odcy',
+       d:'빈 컨테이너는 원칙적으로 <b>수령했던 ODCY</b>로 반환하고, 예외적으로 선사가 지정한 ICD나 CY에 반납할 수 있습니다. 선사가 정한 <b>free time</b>을 지나 반환하면 <b>컨테이너 지체료(detention charge)</b>가 부과됩니다.'}
+    ],
+    LCL:[
+      {t:'혼재적하목록 제출',who:'포워더 → 선사 → 세관',a:'doc',from:'forwarder',via:['carrier'],to:'customs',
+       d:'선사는 공동배선 선사와 포워더로부터 적하목록을 받아 취합하여 제출합니다. 포워더는 House B/L 단위 <b>혼재화물 적하목록</b>을 작성해 선사에 제출합니다.'},
+      {t:'도착통지',who:'포워더 → 수입화주',a:'doc',from:'forwarder',to:'consignee',
+       d:'혼재화물은 포워더가 수하인에게 <b>도착통지</b>를 합니다. 수하인 연락처가 잘못 기재되면 통지가 늦어져 장기 보관료 분쟁이 생길 수 있습니다.'},
+      {t:'선박 입항',who:'선사',a:'ship',from:'out',to:'ship',fx:{show:['ship']},
+       d:'도선사·예인선의 도움을 받아 입항합니다.'},
+      {t:'터미널 양하',who:'하역회사',a:'lift',from:'ship',to:'cy',
+       d:'LCL 혼재 컨테이너를 갠트리크레인으로 양하합니다.'},
+      {t:'구내이송 / 셔틀운송 → CFS 입고',who:'터미널 / 운송업체',a:'truck',from:'cy',to:'odcy',
+       d:'① <b>부두통관</b>: 터미널 양하 → 구내이송 → CFS 입고<br>② <b>ODCY 통관</b>: 터미널 게이트 반출 → 셔틀운송 → ODCY 반입(Gate Log 작성) → CFS 반입'},
+      {t:'반입신고 · 적출 (Devanning)',who:'CFS 오퍼레이터',a:'work',at:'odcy',e:'📦',
+       d:'CFS로 이송된 LCL 화물은 컨테이너에서 <b>적출(devanning)</b>되어 <b>수하인별(B/L별)</b>로 분류됩니다. 보세구역 반입신고를 합니다.'},
+      {t:'수입통관',who:'관세사 → 세관',a:'doc',from:'broker',to:'customs',
+       d:'보세구역 장치 후 수입신고(LCL은 출항전·입항전 신고 불가, 도착전·장치후 신고 가능).'+IMPORT_TABLE},
+      {t:'D/O 제출 · 검수 · 검량',who:'수입화주 → CFS',a:'doc',from:'consignee',to:'odcy',
+       d:'수하인은 D/O를 제출하고 LCL 화물은 <b>CFS에서 인수</b>합니다. 필요 시 검수·검량·감정을 거칩니다.'},
+      {t:'화주의 화물반출',who:'운송업체',a:'van',from:'odcy',to:'consignee',
+       d:'통관이 끝난 화물을 화주별로 반출하여 최종 목적지까지 운송합니다.'}
+    ]
+  }
+};
+/* ===================== 데이터: 항공 수출 ===================== */
+const AIR_ADV = '<table><tr><th>물류상 장점</th><td>소형화물 운송에 적합, 운송기간 단축, 포장비 절감, 통관 간편</td></tr><tr><th>비용상 장점</th><td>포장 경량화로 운임 절감, 보험료 저렴, 투하자본·보관비 절감, 도난·파손 위험 낮음, 관리비 절감</td></tr><tr><th>서비스상 장점</th><td>고객서비스 향상, 갑작스런 수요 대처, 변질성·판매기간 짧은 상품 수송, 위치 파악 용이</td></tr></table>';
+SC.airEx = {
+  tab:'✈️ 항공 수출', kind:'air', dir:'out',
+  intro:'항공화물은 물량 기준 1%에도 못 미치지만 금액 기준 약 30%를 차지합니다. 소량·다품종·고부가가치·긴급·변질성 화물에 적합하며, 예약부터 기적까지 대부분 항공운송주선업자(포워더)가 대행합니다. 절차는 해상과 크게 다르지 않습니다.',
+  statics:{plane:true},
+  nodes:{
+    shipper:{x:80,y:220,ic:'🏭',l:'화주 (Shipper)',sub:'생산 · 포장',d:'<b>Shipper</b>: 물품 생산 및 포장, Packing List 작성, 물품생산코드 인식라벨(Barcode/RFID-EPC 표준) 생산 및 부착.'+AIR_ADV},
+    fwd:{x:260,y:220,ic:'🏬',l:'포워더 창고',sub:'혼재 · House AWB',d:'<b>Forwarder</b>: 운송을 위한 제반 서류 작성, 선적예약, 물품을 항공운송업자에 접수, <b>House Waybill</b> 발급 및 라벨 부착.'},
+    terminal:{x:450,y:220,ic:'🏢',l:'공항 화물터미널',sub:'Truck dock · 보세구역',d:'<b>Carrier</b> 업무: Truck dock에 트럭 주차 → 트러커로부터 물품 접수(수량·중량 확인, <b>보안검색</b>) → Warehouse 보관 및 재고관리. 포장 완료 화물은 <b>보세지역</b>에 반입됩니다.'},
+    uld:{x:640,y:220,ic:'🧱',l:'ULD Build-up',sub:'탑재용기 적재',d:'<b>ULD(Unit Load Device, 항공수송용 탑재용기)</b>에 화물을 행선지별로 컨테이너·팔레트에 적재하고 적하목록을 작성합니다.'},
+    broker:{x:240,y:62,ic:'🧾',l:'관세사',o:1,d:'수출업체로부터 선적서류를 받아 수출신고를 대행하고, 발급된 <b>수출면장</b>을 수출업체(→포워더)에 송부합니다.'},
+    airline:{x:560,y:62,ic:'🛫',l:'항공사 (대리점)',o:1,d:'항공운송장(<b>Master Air Waybill</b>) 발급, 탑재 결정 화물의 적하목록 작성, 탑재계획 수립.'},
+    customs:{x:780,y:62,ic:'🏛️',l:'세관',o:1,d:'수출신고 → 수출심사 및 화물검사 → 수출허가. 적하목록 세관제출용을 접수하여 <b>화물의 반출허가</b>를 내줍니다.'},
+    buyer:{x:1110,y:62,ic:'🌏',l:'수입자(바이어)',o:1,d:'선적통지를 받고 결제조건에 따라 대금을 지급합니다.'}
+  },
+  flows:{
+    STD:[
+      {t:'운송 의뢰 · 선적서류 송부',who:'수출업체 → 포워더 · 관세사',a:'doc',from:'shipper',via:['broker'],to:'fwd',
+       d:'수출업체는 물품의 운송을 포워더에게 맡기고 선적서류를 작성하여 <b>관세사와 포워더</b>에게 보냅니다. 수출 항공화물은 하주가 직접 하는 경우도 있지만 대부분 항공운송주선업자가 대행합니다.'},
+      {t:'항공운송 계약 · 예약 (Booking)',who:'포워더 → 항공사',a:'doc',from:'fwd',to:'airline',
+       d:'수출상품 생산이 완료되면 포워더는 운송 계획을 수립하고 항공사에 예약합니다. 예약 시 <b>항공운송장(AWB) 번호, 출발지/도착지, 포장개수, 포장별 중량, 부피, 상품명</b> 등과 함께 지정 항공편을 의뢰합니다.'},
+      {t:'물품 픽업 · 집하',who:'Trucker',a:'van',from:'shipper',to:'fwd',
+       d:'수출업체가 포워더에게 물품 픽업을 요청합니다. <b>Trucker</b>는 생산자로부터 물품을 복합운송주선업자·물류창고·항공운송업자에게 전달하며, 물품인식코드(Barcode/RFID)로 화물을 식별합니다.'},
+      {t:'화물의 장치장 반입',who:'Trucker → 화물터미널',a:'van',from:'fwd',to:'terminal',
+       d:'포장이 완료된 화물을 공항 화물터미널의 <b>보세지역(장치장)</b>에 반입합니다. 트럭은 Truck dock에 주차합니다.'},
+      {t:'척량 검사 · 보안검색',who:'항공사 / 터미널',a:'work',at:'terminal',e:'⚖️',
+       d:'트러커로부터 물품을 접수하면서 <b>수량·중량을 확인(척량)</b>하고 <b>보안검색</b>을 실시한 후 장치장을 지정·승인하고 Warehouse에 보관합니다.'},
+      {t:'수출신고 → 심사·검사 → 수출허가',who:'관세사 → 세관',a:'doc',from:'broker',to:'customs',
+       d:'상업송장·포장명세서 등을 수출신고서에 첨부하여 관할 세관에 제출 → <b>수출심사 및 화물검사</b> → <b>수출허가(수출신고필증)</b>. 관세사에게서 받은 수출면장은 포워더에게 송부합니다.'},
+      {t:'항공운송장 발급 · 라벨 부착',who:'포워더 / 항공사',a:'work',at:'terminal',e:'🏷️',
+       d:'항공사 또는 대리점에서 항공운송장을 발급받고 화물 내용에 따라 적절한 <b>라벨</b>을 붙입니다. 포워더는 <b>House Waybill</b>, 항공사는 <b>Master Waybill</b>을 발급합니다. 위험물·생동물은 <b>ICAO/IATA</b> 규정을 따라야 합니다. (운송장 및 화물의 인계)'},
+      {t:'ULD 적재 (Build-up) · 적하목록 작성',who:'항공사',a:'tug',from:'terminal',to:'uld',
+       d:'탑재가 결정된 화물은 적하목록에 기재합니다. 운송인은 적하목록의 화물반출 체크용을 가지고 장치장에서 탑재할 화물을 픽업하여 <b>행선지별로 컨테이너·팔레트(ULD)</b>에 적재합니다.'},
+      {t:'적하목록 세관 제출 · 반출허가',who:'항공사 → 세관',a:'doc',from:'airline',to:'customs',
+       d:'작성된 적하목록의 세관제출용을 세관에 제출하여 <b>화물의 반출허가</b>를 받습니다. 항공화물 적하목록은 출항익일 24시까지 제출합니다.'},
+      {t:'ULD → 주기장(Ramp) 이동',who:'지상조업',a:'tug',from:'uld',to:'stand',
+       d:'ULD를 화물터미널에서 <b>주기장(Ramp)</b>으로 이동합니다. 지상조업의 자동화와 항공화물의 컨테이너화로 처리 속도가 빨라졌습니다.'},
+      {t:'항공기 탑재',who:'탑재 책임자',a:'uld',from:'stand',to:'plane',
+       d:'탑재 책임자는 항공기 운항에 필요한 자료와 수하물, 기타 화물량에 따라 <b>탑재계획</b>을 작성하여 ULD를 항공기에 탑재합니다.'},
+      {t:'항공기 출발',who:'항공사',a:'plane',from:'plane',to:'sky',fx:{hide:['plane']},
+       d:'탑재가 끝나면 항공기가 출발합니다. 항공운송은 정시성이 높고 적기인도(Just-in-time)로 재고·자본비용 절감이 가능합니다.'},
+      {t:'AWB 확인 · 대금결제 · 선적통지',who:'포워더 → 수출업체 → 바이어',a:'doc',from:'fwd',via:['shipper'],to:'buyer',
+       d:'수출업체는 선적을 확인한 후 <b>항공 B/L(AWB) 사본</b>을 받아 체크하고, 이상이 없으면 원본을 받은 다음 포워더에 대금을 결제합니다. 바이어에게 <b>선적을 통지</b>하고 결제조건에 따라 대금을 회수합니다.'}
+    ]
+  }
+};
+/* ===================== 데이터: 항공 수입 ===================== */
+SC.airIm = {
+  tab:'✈️ 항공 수입', kind:'air', dir:'in',
+  intro:'항공기가 도착하면 기내 검역 후 하기지시서에 따라 하기하고, 분류장에서 서류와 함께 점검·분류하여 보세창고에 보관합니다. 수하인 또는 통관업자가 수입신고 후 수입허가를 받아 인수하면 절차가 끝납니다.',
+  statics:{plane:false, planeFlip:true},
+  nodes:{
+    consignee:{x:80,y:220,ic:'🏭',l:'수하인 (Consignee)',sub:'물품 수령',d:'<b>Consignee</b>: 물품 수령, Air waybill과 물품코드 인식라벨을 통한 접수 확인. 자가보세장치장을 가진 수하인은 도착 즉시 현장에서 인수할 수 있습니다.'},
+    bonded:{x:270,y:220,ic:'🏬',l:'보세창고',sub:'세관별 배정',d:'도착화물은 항공사가 보관하지 않고 탑재명세서에 따라 대조·파손 점검 후 <b>보세창고</b>에 보관되며, 관련 서류는 항공사가 보관합니다.'},
+    terminal:{x:470,y:220,ic:'🏢',l:'화물터미널 분류장',sub:'Breakdown',d:'하기된 화물은 분류장으로 운반되어 서류와 함께 점검·분류됩니다. 서울 도착 화물은 <b>인천·김포·서울·남서울세관</b> 화물로 분류합니다.'},
+    broker:{x:240,y:62,ic:'🧾',l:'관세사 · 포워더',o:1,d:'<b>Customer(통관)</b>: 도착지 세관 통관 서류(수입신고서) 작성, 관세 납부, House Waybill 단위 수입신고내역 작성. 혼재화물은 항공사로부터 AWB를 인도받은 <b>복합운송주선업체</b>가 도착통지를 합니다.'},
+    airline:{x:520,y:62,ic:'🛬',l:'항공사 (지점)',o:1,d:'<b>Carrier</b>: 항공기 도착, ULD 하기, ULD를 주기장에서 터미널로 이동, 적하목록 세관 신고, 화물 분류(Breakdown), 보관·재고관리, 반출입 세관신고, 운송업자에게 화물 인계.'},
+    customs:{x:780,y:62,ic:'🏛️',l:'세관',o:1,d:'적하목록 접수, 화물 반출입 신고, 수입신고 심사·수입허가, 보세운송 허가.'},
+    origin:{x:1110,y:62,ic:'🌏',l:'출발지 항공사',o:1,d:'출발지에서 항공편 출발 정보와 적하목록 등 <b>전문(電文)</b>을 도착지로 송신합니다.'}
+  },
+  flows:{
+    STD:[
+      {t:'전문 접수',who:'출발지 항공사 → 도착지 항공사',a:'doc',from:'origin',to:'airline',
+       d:'항공화물 수입운송 절차의 첫 단계. 도착지 항공사는 출발지로부터 항공편·적하목록 등 <b>전문</b>을 접수하여 하기와 창고배정을 준비합니다.'},
+      {t:'항공기 도착 · 기내 검역',who:'항공사',a:'plane',from:'sky',to:'plane',fx:{show:['plane']},
+       d:'항공기가 도착하면 <b>기내 검역</b>이 행해집니다.'},
+      {t:'ULD 하기 (Unloading Instruction)',who:'지상조업',a:'uld',from:'plane',to:'stand',
+       d:'<b>하기지시서(Unloading Instruction)</b>에 따라 항공기에서 ULD를 하기합니다.'},
+      {t:'주기장 → 화물터미널 이동',who:'지상조업',a:'tug',from:'stand',to:'terminal',
+       d:'ULD를 주기장에서 화물터미널(분류장)로 운반합니다.'},
+      {t:'서류분류 및 검토 · 적하목록 신고',who:'항공사 → 세관',a:'doc',from:'airline',to:'customs',
+       d:'항공사는 관련 서류를 분류·검토하고 <b>적하목록을 세관에 신고</b>합니다.'},
+      {t:'창고배정 · 실화물 분류 (Breakdown)',who:'항공사',a:'work',at:'terminal',e:'📦',
+       d:'탑재명세서에 의거해 화물을 대조 확인하고 <b>파손 유무를 점검</b>한 후 분류합니다. 서울 도착 화물은 인천·김포·서울·남서울세관 화물로 분류하며, 창고배정이 끝나면 항공운송장은 통관지역에 따라 터미널 내 항공사 지점·영업소로 보내집니다.'},
+      {t:'보세창고 입고',who:'항공사 / 보세운송업자',a:'van',from:'terminal',to:'bonded',
+       d:'분류된 화물은 배정된 <b>보세창고</b>에 보관됩니다. 인천·김포세관을 제외한 서울·남서울세관, 부산·대구 화물은 세관 감독 하에 <b>보세운송면허</b>를 득한 업자가 운반합니다.'},
+      {t:'도착통지',who:'항공사 / 포워더 → 수하인',a:'doc',from:'airline',via:['broker'],to:'consignee',
+       d:'항공사 지점은 수하인에게 전화 등으로 <b>도착통지</b>를 합니다. 혼재화물은 AWB를 인도받은 복합운송주선업체가 통지합니다.'},
+      {t:'운송장(AWB) 인도',who:'항공사 → 수하인 / 통관업자',a:'doc',from:'airline',to:'broker',
+       d:'AWB 인계 시 본인은 <b>주민등록증</b>을, 대리인은 주민등록증 외에 <b>위임장</b>을 제출합니다. <b>착지불화물</b>은 운송요금 외에 약 2%의 <b>운임착지불청구비용(charge collect fee)</b>을 지불합니다.'},
+      {t:'수입신고 · 관세 납부 · 수입허가',who:'관세사 → 세관',a:'doc',from:'broker',to:'customs',
+       d:'항공사로부터 AWB를 인수받은 수하인 또는 통관업자는 <b>수입신고서</b>를 세관에 제출하고 관세를 납부하여 <b>수입허가</b>를 받습니다. 항공기로 수입되는 물품은 출항전 신고도 가능합니다.'+IMPORT_TABLE},
+      {t:'보세운송 / 국내 배송',who:'Trucker',a:'van',from:'bonded',to:'consignee',
+       d:'외국물품이 통관되지 않은 상태로 터미널 이외 지역으로 수송되면 <b>보세운송허가</b>가 필요합니다(<b>간이보세운송</b>·<b>특별보세운송</b>). 목적지를 부산으로 표기한 AWB는 통과화물로 취급되어 항공사가 항공기 또는 보세운송트럭으로 운송해 줍니다.'},
+      {t:'물품 수령 · 접수 확인',who:'수하인',a:'work',at:'consignee',e:'✅',
+       d:'수하인은 물품을 수령하고 <b>Air waybill과 물품코드 인식라벨</b>로 접수를 확인합니다. 통관·인수로 모든 절차가 끝납니다.'}
+    ]
+  }
+};
+/* ===================== 엔진: 그리기 ===================== */
+const NS='http://www.w3.org/2000/svg';
+const LANE=330, RAIL=384, WATER=380, BOOM=112;
+const SHIP_X=1050, PLANE_X=900, PLANE_Y=372;
+const SPECIAL={
+  sea:{ship:{x:SHIP_X,y:WATER}, out:{x:1360,y:WATER}},
+  air:{stand:{x:790,y:LANE}, plane:{x:PLANE_X,y:PLANE_Y}, sky:{x:1420,y:120}}
+};
+const CC=['#d9483b','#2f7fc1','#f5a623','#1f9d6b','#7b4fd6','#e07b39','#3b9fb0'];
+const $=id=>document.getElementById(id);
+
+function wheel(x,y,r){return `<circle cx="${x}" cy="${y}" r="${r}" fill="#1e2630"/><circle cx="${x}" cy="${y}" r="${r*.4}" fill="#9aa5b1"/>`;}
+function boxC(x,y,w,h,c){ // 컨테이너 박스(골판 무늬)
+  let s=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="1.2" fill="${c}" stroke="rgba(0,0,0,.25)"/>`;
+  for(let i=x+4;i<x+w-1;i+=4) s+=`<line x1="${i}" y1="${y+2}" x2="${i}" y2="${y+h-2}" stroke="rgba(0,0,0,.14)"/>`;
+  return s;
+}
+const DRAW={
+  truck:(c='#2f7fc1')=>boxC(-40,-31,52,21,c)+
+    `<path d="M14 -10V-25Q14 -28 17 -28H26L33 -19V-10Z" fill="#d9483b"/><path d="M18 -25H25L29.5 -19H18Z" fill="#cde9ff"/>`+
+    `<rect x="-42" y="-10" width="76" height="4" fill="#2b333d"/>`+wheel(-32,-4,5)+wheel(-20,-4,5)+wheel(25,-4,5),
+  truckE:()=>DRAW.truck('#a9b6c4')+`<text x="-14" y="-17" text-anchor="middle" font-size="8" font-weight="700" fill="#fff">EMPTY</text>`,
+  van:()=>`<rect x="-36" y="-33" width="48" height="24" rx="2" fill="#fff" stroke="#7b8a9b"/><text x="-12" y="-16" text-anchor="middle" font-size="13">📦</text>`+
+    `<path d="M14 -9V-25Q14 -28 17 -28H25L32 -19V-9Z" fill="#f5a623"/><path d="M18 -25H24L28.5 -19H18Z" fill="#cde9ff"/>`+
+    `<rect x="-38" y="-9" width="72" height="3" fill="#2b333d"/>`+wheel(-26,-4,4.5)+wheel(24,-4,4.5),
+  train:()=>{let s='';[-100,-46].forEach((x,k)=>{s+=`<rect x="${x}" y="-9" width="50" height="4" fill="#3c4650"/>`+boxC(x+2,-29,46,20,CC[k+1])+wheel(x+8,-4,4)+wheel(x+42,-4,4);});
+    return s+`<path d="M8 -6V-30H40Q52 -30 54 -18V-6Z" fill="#1d6fb8"/><rect x="12" y="-26" width="12" height="8" fill="#cde9ff"/><rect x="6" y="-8" width="50" height="4" fill="#3c4650"/>`+wheel(16,-4,4)+wheel(46,-4,4);},
+  ship:()=>{let s='';const st=[[-70,3],[-34,3],[2,3],[38,2],[74,1]];
+    st.forEach(([x,n],k)=>{for(let j=0;j<n;j++) s+=boxC(x,-41-j*14,34,14,CC[(k+j*2)%CC.length]);});
+    return `<path d="M-112 -27H112L96 4H-100Z" fill="#23384f"/><path d="M-104 -6H104L96 4H-100Z" fill="#b8322a"/>`+s+
+      `<rect x="-104" y="-80" width="28" height="53" fill="#f4f7fb" stroke="#8796a8"/><rect x="-100" y="-74" width="20" height="5" fill="#2b4a6b"/><rect x="-100" y="-64" width="20" height="5" fill="#2b4a6b"/><rect x="-96" y="-94" width="10" height="14" fill="#d9483b"/>`;},
+  plane:()=>`<path d="M-86 -36L-94 -74H-74L-52 -42Z" fill="#2a5ea8"/>`+
+    `<path d="M-86 -38Q-62 -46 40 -46Q76 -46 90 -31Q80 -20 40 -20H-70Q-86 -22 -86 -38Z" fill="#f4f7fb" stroke="#8796a8"/>`+
+    `<path d="M66 -42Q78 -40 84 -34H70Z" fill="#2b4a6b"/>`+
+    Array.from({length:9},(_,k)=>`<circle cx="${-48+k*11}" cy="-36" r="1.8" fill="#6c87a6"/>`).join('')+
+    `<path d="M-6 -30L-44 -8H-28L24 -30Z" fill="#b9c6d6" stroke="#8796a8"/><rect x="-24" y="-22" width="24" height="9" rx="4.5" fill="#7b8a9b"/>`+
+    `<line x1="-14" y1="-20" x2="-14" y2="-4" stroke="#444" stroke-width="2"/><line x1="58" y1="-20" x2="58" y2="-4" stroke="#444" stroke-width="2"/>`+wheel(-14,-3,3.2)+wheel(58,-3,3.2),
+  uld:()=>`<path d="M-15 0V-26H10L17 -17V0Z" fill="#c0c9d4" stroke="#6f7f91"/><line x1="-15" y1="-13" x2="17" y2="-13" stroke="#8d9bab"/><text x="0" y="-6" text-anchor="middle" font-size="8">📦</text>`,
+  tug:()=>`<rect x="-46" y="-9" width="52" height="4" fill="#555"/><path d="M-44 -9V-35H-4L4 -26V-9Z" fill="#c0c9d4" stroke="#6f7f91"/><text x="-20" y="-17" text-anchor="middle" font-size="11">📦📦</text>`+wheel(-38,-4,3.5)+wheel(-2,-4,3.5)+
+    `<line x1="6" y1="-7" x2="14" y2="-7" stroke="#555" stroke-width="2"/><rect x="14" y="-18" width="22" height="13" rx="2" fill="#f5a623"/><rect x="18" y="-26" width="10" height="9" fill="none" stroke="#555" stroke-width="1.5"/>`+wheel(19,-4,4)+wheel(32,-4,4),
+  lift:()=>`<line class="cable" x1="-8" y1="-15" x2="-8" y2="-100" stroke="#333" stroke-width="1.2"/><line class="cable" x1="8" y1="-15" x2="8" y2="-100" stroke="#333" stroke-width="1.2"/>`+boxC(-17,-15,34,15,'#e07b39'),
+  doc:()=>`<circle r="15" fill="#fff" stroke="#f5a623" stroke-width="2.5"/><text y="6" text-anchor="middle" font-size="16">📄</text>`
+};
+
+function cloud(x,y,s,dur){return `<g opacity=".9"><g transform="translate(${x} ${y}) scale(${s})"><ellipse cx="0" cy="0" rx="34" ry="12" fill="#fff"/><ellipse cx="-14" cy="-8" rx="16" ry="12" fill="#fff"/><ellipse cx="12" cy="-10" rx="18" ry="14" fill="#fff"/></g><animateTransform attributeName="transform" type="translate" values="0 0;1300 0" dur="${dur}s" begin="-${dur*Math.random()}s" repeatCount="indefinite"/></g>`;}
+
+function background(kind){
+  let s=`<defs><linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfe6fb"/><stop offset="1" stop-color="#eef6ff"/></linearGradient>
+  <linearGradient id="gSea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4c9be0"/><stop offset="1" stop-color="#1c5e9e"/></linearGradient>
+  <clipPath id="cpSea"><rect x="920" y="352" width="280" height="108"/></clipPath></defs>
+  <rect width="1200" height="290" fill="url(#gSky)"/>`;
+  s+=cloud(-200,40,1,90)+cloud(-600,120,.7,120)+cloud(-1000,70,.9,100);
+  s+=`<rect y="290" width="1200" height="170" fill="#e4ebdf"/>`;
+  s+=`<rect x="20" y="300" width="${kind==='sea'?880:540}" height="40" rx="3" fill="#5b6470"/><line x1="26" y1="320" x2="${kind==='sea'?895:555}" y2="320" stroke="#e9edf1" stroke-width="2" stroke-dasharray="14 12"/>`;
+  s+=`<text class="lane-lbl" x="26" y="356">공로 (도로 · 셔틀)</text>`;
+  if(kind==='sea'){
+    s+=`<g><line x1="200" y1="${RAIL+1}" x2="470" y2="${RAIL+1}" stroke="#6b5444" stroke-width="2"/>`;
+    for(let x=204;x<470;x+=9) s+=`<rect x="${x}" y="${RAIL-1}" width="3" height="7" fill="#8a6f5a"/>`;
+    s+=`<line x1="200" y1="${RAIL}" x2="470" y2="${RAIL}" stroke="#555" stroke-width="2"/><text class="lane-lbl" x="200" y="${RAIL+20}">철도 (보세운송)</text></g>`;
+    s+=`<rect x="800" y="290" width="125" height="62" fill="#a9b1ba"/><rect x="800" y="348" width="125" height="6" fill="#6f7983"/><text class="lane-lbl" x="808" y="345">안벽 (Quay)</text>`;
+    s+=`<rect x="920" y="290" width="280" height="170" fill="url(#gSea)"/><g clip-path="url(#cpSea)"><g>`;
+    for(let r=0;r<5;r++){let d=`M${880+(r%2)*20} ${362+r*20}`;for(let k=0;k<12;k++) d+=' q10 -5 20 0 t20 0';s+=`<path d="${d}" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.6"/>`;}
+    s+=`<animateTransform attributeName="transform" type="translate" values="0 0;-40 0" dur="3s" repeatCount="indefinite"/></g></g>`;
+    s+=`<text class="lane-lbl" x="1120" y="452" fill="#fff" style="fill:#dbeeff">바다 (해상운송)</text>`;
+  } else {
+    s+=`<rect x="540" y="290" width="660" height="96" fill="#cfd6dd"/><text class="lane-lbl" x="560" y="306">주기장 (Ramp / Apron)</text>`;
+    s+=`<rect x="600" y="392" width="600" height="50" fill="#3d4550"/><line x1="610" y1="417" x2="1200" y2="417" stroke="#fff" stroke-width="2.5" stroke-dasharray="26 18"/><text class="lane-lbl" x="610" y="455">활주로 (Runway)</text>`;
+  }
+  return s;
+}
+function statics(sc){
+  let s='';
+  const flip=sc.dir==='in'?' scale(-1 1)':'';
+  if(sc.kind==='sea'){
+    s+=`<g id="stShip" transform="translate(${SHIP_X} ${WATER})${flip}">${DRAW.ship()}</g>`;
+    s+=`<g id="crane"><rect x="846" y="${BOOM}" width="7" height="236" fill="#d9483b"/><rect x="903" y="${BOOM}" width="7" height="236" fill="#d9483b"/>
+      <line x1="849" y1="200" x2="906" y2="260" stroke="#b8322a" stroke-width="3"/><line x1="906" y1="200" x2="849" y2="260" stroke="#b8322a" stroke-width="3"/>
+      <rect x="790" y="${BOOM-8}" width="350" height="9" fill="#c23b2f"/><rect x="842" y="${BOOM-30}" width="72" height="22" fill="#e7ecf1" stroke="#9aa5b1"/>
+      <line x1="878" y1="${BOOM-30}" x2="1130" y2="${BOOM-8}" stroke="#9aa5b1" stroke-width="1.5"/><line x1="878" y1="${BOOM-30}" x2="800" y2="${BOOM-8}" stroke="#9aa5b1" stroke-width="1.5"/>
+      <rect id="trolley" x="1035" y="${BOOM}" width="30" height="8" fill="#333"/><text class="lane-lbl" x="924" y="${BOOM+24}">갠트리크레인</text></g>`;
+  } else {
+    s+=`<g id="stPlane" transform="translate(${PLANE_X} ${PLANE_Y})${flip}">${DRAW.plane()}</g>`;
+  }
+  return s;
+}
+function nodeSvg(id,n){
+  const w=n.o?132:118,h=n.o?40:60;
+  let s=`<g class="node${n.o?' office':''}" data-id="${id}" transform="translate(${n.x} ${n.y})">
+    <rect class="box" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" rx="10"/>`;
+  if(n.o) s+=`<text x="${-w/2+12}" y="6" font-size="17">${n.ic}</text><text class="lbl" x="${-w/2+36}" y="5">${n.l}</text>`;
+  else s+=`<text x="0" y="12" text-anchor="middle" font-size="30">${n.ic}</text><text class="lbl" x="0" y="${h/2+17}" text-anchor="middle">${n.l}</text>`+
+    (n.sub?`<text class="sub" x="0" y="${h/2+31}" text-anchor="middle">${n.sub}</text>`:'');
+  return s+'</g>';
+}
+function renderScene(){
+  const sc=SC[cur.sc], svg=$('scene');
+  let s=background(sc.kind);
+  s+=`<g id="links"></g>`;
+  for(const id in sc.nodes) s+=nodeSvg(id,sc.nodes[id]);
+  s+=statics(sc)+`<g id="actors"></g>`;
+  svg.innerHTML=s;
+  svg.querySelectorAll('.node').forEach(g=>{
+    const n=sc.nodes[g.dataset.id];
+    g.addEventListener('mouseenter',e=>showTip(`<h4>${n.ic} ${n.l}</h4>${n.d}`,e));
+    g.addEventListener('mousemove',moveTip);
+    g.addEventListener('mouseleave',hideTip);
+  });
+}
+/* ===================== 엔진: 상태 · 애니메이션 ===================== */
+const cur={sc:'seaEx',v:'FCL',i:-1,playing:false,raf:0,timer:0,speed:1,token:0};
+const steps=()=>SC[cur.sc].flows[cur.v];
+const ICON={doc:'📄',truck:'🚛',truckE:'🚚',van:'🚐',train:'🚆',ship:'🚢',lift:'🏗️',plane:'✈️',uld:'🧱',tug:'🚜',work:'⚙️'};
+const VLABEL={FCL:'FCL (만재화물)',LCL:'LCL (소량 혼재화물)',STD:'표준 절차'};
+
+function pt(id){const sc=SC[cur.sc];return sc.nodes[id]||SPECIAL[sc.kind][id];}
+function pathFor(s){
+  const sc=SC[cur.sc], A=pt(s.from), B=pt(s.to);
+  switch(s.a){
+    case 'truck':case 'truckE':case 'van':case 'tug': return [[A.x,LANE],[B.x,LANE]];
+    case 'train': return [[A.x,RAIL],[B.x,RAIL]];
+    case 'doc': return [s.from,...(s.via||[]),s.to].map(k=>{const p=pt(k);return [p.x,p.y];});
+    case 'ship': return [[A.x,WATER],[B.x,WATER]];
+    case 'lift': {const p=[[830,LANE],[830,BOOM+60],[SHIP_X,BOOM+60],[SHIP_X,326]];return s.from==='ship'?p.reverse():p;}
+    case 'uld': {const p=[[790,LANE],[820,LANE-6],[PLANE_X-45,PLANE_Y-28]];return s.from==='plane'?p.reverse():p;}
+    case 'plane': return s.to==='sky'
+      ? [[PLANE_X,PLANE_Y],[945,412],[1010,417],[1130,417],[1230,340],[1420,150]]
+      : [[1420,110],[1200,405],[1040,417],[960,412],[PLANE_X,PLANE_Y]];
+    default: {const p=pt(s.at);return [[p.x,p.y]];}
+  }
+}
+function polyAt(pts,f){
+  if(pts.length<2) return {x:pts[0][0],y:pts[0][1],dx:1,dy:0};
+  const seg=[];let tot=0;
+  for(let k=1;k<pts.length;k++){const l=Math.hypot(pts[k][0]-pts[k-1][0],pts[k][1]-pts[k-1][1]);seg.push(l);tot+=l;}
+  let d=f*tot,k=0;while(k<seg.length-1&&d>seg[k]){d-=seg[k];k++;}
+  const a=pts[k],b=pts[k+1],r=seg[k]?d/seg[k]:0;
+  return {x:a[0]+(b[0]-a[0])*r,y:a[1]+(b[1]-a[1])*r,dx:b[0]-a[0],dy:b[1]-a[1]};
+}
+const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+
+function setStatic(id,on){const el=$(id==='ship'?'stShip':'stPlane');if(el) el.style.display=on?'':'none';}
+function applyState(upto){
+  const sc=SC[cur.sc];
+  if(sc.kind==='sea') setStatic('ship',sc.statics.ship); else setStatic('plane',sc.statics.plane);
+  steps().slice(0,upto).forEach(s=>applyFx(s));
+}
+function applyFx(s){if(!s.fx) return;(s.fx.show||[]).forEach(k=>setStatic(k,true));(s.fx.hide||[]).forEach(k=>setStatic(k,false));}
+
+function highlight(s){
+  document.querySelectorAll('#scene .node').forEach(g=>{
+    const id=g.dataset.id;g.classList.toggle('active',[s.from,s.to,s.at,...(s.via||[])].includes(id));
+  });
+  // 서류 이동 경로 점선
+  const L=$('links');L.innerHTML='';
+  if(s.a==='doc'){const p=pathFor(s).map(q=>q.join(',')).join(' ');
+    L.innerHTML=`<polyline points="${p}" fill="none" stroke="#f5a623" stroke-width="2" stroke-dasharray="5 6" opacity=".8"><animate attributeName="stroke-dashoffset" values="22;0" dur=".8s" repeatCount="indefinite"/></polyline>`;}
+}
+
+function runStep(i,onDone){
+  const s=steps()[i], tok=++cur.token, layer=$('actors');
+  cancelAnimationFrame(cur.raf);layer.innerHTML='';
+  applyState(i);highlight(s);updateUI();
+  const dur={doc:1800,work:2000,lift:3400,ship:3800,plane:4200,uld:1600,train:3000}[s.a]||2800;
+  const pts=pathFor(s);
+  const g=document.createElementNS(NS,'g');
+  if(s.a==='work'){
+    const p=pts[0][1]>120?-40:-32;
+    g.innerHTML=`<circle r="34" fill="none" stroke="#f5a623" stroke-width="3"><animate attributeName="r" values="30;52" dur="1s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="1s" repeatCount="indefinite"/></circle>
+      <g class="bob"><circle cx="40" cy="${p}" r="17" fill="#fff" stroke="#f5a623" stroke-width="2.5"/><text x="40" y="${p+7}" text-anchor="middle" font-size="19">${s.e||'⚙️'}</text></g>`;
+  } else g.innerHTML=(DRAW[s.a]||DRAW.doc)();
+  layer.appendChild(g);
+  if(s.a==='ship') setStatic('ship',false);
+  if(s.a==='plane') setStatic('plane',false);
+  const cables=g.querySelectorAll('.cable'), trolley=$('trolley');
+  const t0=performance.now(), D=dur/cur.speed;
+  const frame=now=>{
+    if(tok!==cur.token) return;
+    const t=Math.min(1,(now-t0)/D), e=s.a==='work'?t:ease(t);
+    const q=polyAt(pts,e);let x=q.x,y=q.y,tr='';
+    if(s.a==='work'){x=pts[0][0];y=pts[0][1];const b=g.querySelector('.bob');b.setAttribute('transform',`translate(0 ${-Math.abs(Math.sin(t*Math.PI*4))*8})`);}
+    else if(s.a==='doc'){y-=Math.sin(t*Math.PI)*24;}
+    else if(['truck','truckE','van','tug','train'].includes(s.a)){y+=Math.sin(now/55)*.6;if(q.dx<0) tr=' scale(-1 1)';}
+    else if(s.a==='ship'){y+=Math.sin(now/300)*1.5;if(q.dx<0) tr=' scale(-1 1)';}
+    else if(s.a==='plane'){
+      // 이륙: 기수 들림만 허용 / 착륙: 약간의 기수 내림만 허용 (지상 활주 중에는 수평 유지)
+      if(q.dx<0){let th=Math.atan2(-q.dy,-q.dx)*180/Math.PI;th=q.dy>0&&q.y<390?Math.max(-12,th):0;tr=` rotate(${th}) scale(-1 1)`;}
+      else{let th=Math.atan2(q.dy,q.dx)*180/Math.PI;th=Math.max(-28,Math.min(0,th));tr=` rotate(${th})`;}
+    }
+    else if(s.a==='lift'){cables.forEach(c=>c.setAttribute('y2',BOOM+8-y));if(trolley) trolley.setAttribute('x',x-15);}
+    if(s.a==='uld'){g.style.opacity=s.from==='plane'?Math.min(1,t*5):Math.min(1,(1-t)*5);}
+    g.setAttribute('transform',`translate(${x} ${y})${tr}`);
+    if(t<1) cur.raf=requestAnimationFrame(frame);
+    else {applyFx(s);if(s.a==='plane'||s.a==='ship') layer.innerHTML='';onDone&&onDone(tok);}
+  };
+  cur.raf=requestAnimationFrame(frame);
+}
+
+function go(i,auto){
+  clearTimeout(cur.timer);
+  const n=steps().length;if(i<0||i>=n) return;
+  cur.i=i;
+  runStep(i,tok=>{
+    markDone();
+    if(cur.playing&&tok===cur.token){
+      if(cur.i<n-1) cur.timer=setTimeout(()=>go(cur.i+1),700/cur.speed);
+      else {cur.playing=false;updateUI();}
+    }
+  });
+}
+
+/* ===================== UI ===================== */
+function stepTip(s,k){return `<div class="who">STEP ${k+1} · ${s.who}</div><h4>${s.t}</h4>${s.d}<div class="src">출처: 한국의 수출입물류 프로세스 제2장</div>`;}
+function buildTabs(){
+  $('tabs').innerHTML=Object.keys(SC).map(k=>`<button class="tab${k===cur.sc?' on':''}" data-k="${k}">${SC[k].tab}<span class="k">${Object.values(SC[k].flows).map(f=>f.length).join(' / ')}단계</span></button>`).join('');
+  $('tabs').querySelectorAll('.tab').forEach(b=>b.onclick=()=>{cur.sc=b.dataset.k;cur.v=Object.keys(SC[cur.sc].flows)[0];load();});
+}
+function buildVariant(){
+  const vs=Object.keys(SC[cur.sc].flows), el=$('variant');
+  el.style.display=vs.length>1?'':'none';
+  el.innerHTML=vs.map(v=>`<button class="${v===cur.v?'on':''}" data-v="${v}">${VLABEL[v]}</button>`).join('');
+  el.querySelectorAll('button').forEach(b=>b.onclick=()=>{cur.v=b.dataset.v;load();});
+}
+function buildSteps(){
+  const el=$('steps');
+  el.innerHTML=steps().map((s,k)=>`<div class="card" data-k="${k}"><span class="n">${String(k+1).padStart(2,'0')}</span><span class="ic">${s.a==='work'?(s.e||'⚙️'):ICON[s.a]}</span><div class="t">${s.t}</div><div class="w">${s.who}</div></div>`).join('');
+  el.querySelectorAll('.card').forEach(c=>{
+    const k=+c.dataset.k;
+    c.onmouseenter=e=>showTip(stepTip(steps()[k],k),e);
+    c.onmousemove=moveTip;c.onmouseleave=hideTip;
+    c.onclick=()=>{cur.playing=false;go(k);};
+  });
+}
+function markDone(){document.querySelectorAll('#steps .card').forEach((c,k)=>c.classList.toggle('done',k<cur.i));}
+function updateUI(){
+  const n=steps().length, s=steps()[cur.i];
+  document.querySelectorAll('#steps .card').forEach((c,k)=>{c.classList.toggle('on',k===cur.i);c.classList.toggle('done',k<cur.i);});
+  $('prog').style.width=cur.i<0?'0':((cur.i+1)/n*100)+'%';
+  $('bPlay').textContent=cur.playing?'⏸ 일시정지':'▶ 재생';
+  $('caption').innerHTML=s
+    ?`<div class="no">${String(cur.i+1).padStart(2,'0')}</div><div class="tt">${s.t}<span class="who">${s.who}</span></div><div class="dd">${s.d}</div>`
+    :`<div class="no">▶</div><div class="tt">${SC[cur.sc].tab} · ${VLABEL[cur.v]}</div><div class="dd">‘재생’을 누르면 ${n}단계 프로세스가 순서대로 진행됩니다. 장면 속 시설·기관과 아래 단계 카드에 마우스를 올리면 PDF 해설이 표시됩니다.</div>`;
+}
+function load(){
+  cur.playing=false;cur.token++;cancelAnimationFrame(cur.raf);clearTimeout(cur.timer);cur.i=-1;
+  buildTabs();buildVariant();buildSteps();renderScene();applyState(0);
+  $('intro').textContent=SC[cur.sc].intro;updateUI();
+}
+$('bPlay').onclick=()=>{
+  if(cur.playing){cur.playing=false;updateUI();return;}
+  cur.playing=true;const n=steps().length;
+  go(cur.i<0||cur.i>=n-1?0:cur.i+1);
+};
+$('bNext').onclick=()=>{cur.playing=false;go(Math.min(cur.i+1,steps().length-1));};
+$('bPrev').onclick=()=>{cur.playing=false;go(Math.max(cur.i-1,0));};
+$('bReset').onclick=load;
+$('speed').oninput=e=>{cur.speed=+e.target.value;$('spv').textContent=cur.speed.toFixed(2).replace(/0$/,'')+'x';};
+
+/* 툴팁 */
+const tip=$('tip');
+function showTip(html,e){tip.innerHTML=html;tip.classList.add('show');moveTip(e);}
+function moveTip(e){
+  const pad=16,w=tip.offsetWidth,h=tip.offsetHeight;
+  let x=e.clientX+pad,y=e.clientY+pad;
+  if(x+w>innerWidth-8) x=e.clientX-w-pad;
+  if(y+h>innerHeight-8) y=Math.max(8,innerHeight-h-8);
+  tip.style.left=Math.max(8,x)+'px';tip.style.top=y+'px';
+}
+function hideTip(){tip.classList.remove('show');}
+
+$('legend').innerHTML=`<b>용어</b> · <b>FCL</b> 한 화주 화물로 컨테이너를 채운 만재화물 · <b>LCL</b> 여러 화주의 소량 혼재화물 · <b>CY</b> 컨테이너 야드 · <b>CFS</b> 컨테이너 화물 조작장(혼재·적출) · <b>ODCY</b> 부두 밖 CY · <b>ICD</b> 내륙컨테이너기지 · <b>S/R</b> 선적의뢰서 · <b>EIR</b> 기기수도증 · <b>D/R</b> 부두수취증 · <b>B/L</b> 선하증권 · <b>D/O</b> 화물인도지시서 · <b>L/G</b> 수입화물선취보증서 · <b>AWB</b> 항공운송장 · <b>ULD</b> 항공 탑재용기<br>
+<b>애니메이션</b> · 🚛 컨테이너 트럭 · 🚚 공컨테이너 · 🚐 소량화물 차량 · 🚆 철도 · 🏗️ 갠트리크레인 적·양하 · 🚢 선박 · 🚜 ULD 견인차 · ✈️ 항공기 · 📄 서류·전자신고 흐름(점선)`;
+(function(){ // 딥링크: #seaIm/FCL/5  (탭/변형/단계번호)
+  const [k,v,n]=decodeURIComponent(location.hash.slice(1)).split('/');
+  if(SC[k]){cur.sc=k;if(SC[k].flows[v]) cur.v=v;}
+  load();
+  if(SC[k]&&n) go(Math.max(0,Math.min(+n-1,steps().length-1)));
+})();
+</script>
+</body>
+</html>
